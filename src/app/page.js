@@ -1,95 +1,131 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+import React, {useState, useEffect} from "react"
+import Card from "./Card"
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+const gameCatalog = () => {
+  const [list, setList] = useState([])
+  const [genre, setGenre] = useState([])
+  const [search, setSearch] = useState([])
+  const [currentGenre, setCurrentGenre] = useState('')
+  const [currentPage, setCurrentPage] = useState('https://api.rawg.io/api/games?page_size=40&key=5ea20edd3ffe46af97668ab0242fe5ce')
+  const [nextPage, setNextPage] = useState()
+  const [prevPage, setPrevPage] = useState()
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+// const apiKey = '5ea20edd3ffe46af97668ab0242fe5ce'
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+// useEffect(() => {
+//   window.scrollTo(0,0);
+// }, []);
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+useEffect(() => {
+  fetch(currentPage)
+  .then(response => response.json())
+  .then(data => {
+    setList(data.results)
+    setNextPage(data.next, window.scrollTo(0,0))
+    setPrevPage(data.previous, window.scrollTo(0,0))
+    console.log(data)
+    })
+},[currentPage])
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+
+const topHundredClick = () => {
+  fetch('https://api.rawg.io/api/games?page_size=40&key=5ea20edd3ffe46af97668ab0242fe5ce')
+  .then(response => response.json())
+  .then(data => {
+    setList(data.results)
+    setCurrentGenre(null)
+    })
 }
+
+useEffect(() => {
+  fetch('https://api.rawg.io/api/genres?key=5ea20edd3ffe46af97668ab0242fe5ce')
+  .then(response => response.json())
+  .then(data => {
+    setGenre(data.results)
+  })
+},[])
+
+
+const handleGenreClick = (genre) => {
+  fetch(`https://api.rawg.io/api/games?page_size=40&genres=${genre.id}&key=5ea20edd3ffe46af97668ab0242fe5ce`)
+  .then(response => response.json())
+  .then(data => {
+    setList(data.results)
+  })
+  setCurrentGenre(genre.name)
+}
+
+
+
+const handleSearchClick = () => {
+  fetch(`https://api.rawg.io/api/games?search=${search}&key=5ea20edd3ffe46af97668ab0242fe5ce`)
+  .then(response => response.json())
+  .then(data => {
+    setList(data.results)
+   }, [search])
+}
+
+const goToNextPage = () => {
+  setCurrentPage(nextPage)
+}
+
+const goToPrevPage = () => {
+  setCurrentPage(prevPage)
+}
+
+
+  return (
+    <>
+<h1>{!currentGenre ? 'Top 100 Games' : `${currentGenre} Games`}</h1>
+
+
+<div className="top100" onClick={topHundredClick}>Top 100</div>
+     <div className="search-input">
+     <input
+     onChange={(e) => handleSearchClick(setSearch(e.target.value.toUpperCase()))}
+     value={search}
+     placeholder="Search Game... "/> 
+    
+</div>
+
+
+
+
+<div className="game-body">
+  
+
+<div className="genre-list">
+
+<h2>Genres</h2>
+  {genre?.map((item, i) => {
+    return <ul onClick={() => handleGenreClick(item)} className="genre-each" key={i}> 
+    <img className="genre-image" src={item.image_background} />
+    <div className="genre-name">{item.name}</div>
+     </ul>
+  } )}
+</div>
+
+ &nbsp;
+
+  <div className="game-list">
+{list?.map((game, i) => {
+
+  return <Card key={i} game={game}  />
+    
+   
+})}
+
+</div>
+
+
+</div>
+
+<div className="footer"><button className="btn"  onClick={goToPrevPage}>Back</button><button className="btn" onClick={goToNextPage}>Next</button></div>
+
+    </>
+  )
+}
+
+export default gameCatalog;
