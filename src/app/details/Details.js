@@ -55,8 +55,6 @@ if (!game) return null
 
           <div className="column1">
 
-          {/* <div className="game-title">{game.name}</div> */}
-
 <div><img className="game-pic" src={game.background_image} /></div>
 
           
