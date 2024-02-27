@@ -12,11 +12,7 @@ const gameCatalog = () => {
   const [nextPage, setNextPage] = useState()
   const [prevPage, setPrevPage] = useState()
 
-// const apiKey = '5ea20edd3ffe46af97668ab0242fe5ce'
 
-// useEffect(() => {
-//   window.scrollTo(0,0);
-// }, []);
 
 useEffect(() => {
   fetch(currentPage)
@@ -25,7 +21,6 @@ useEffect(() => {
     setList(data.results)
     setNextPage(data.next, window.scrollTo(0,0))
     setPrevPage(data.previous, window.scrollTo(0,0))
-    console.log(data)
     })
 },[currentPage])
 
@@ -36,6 +31,7 @@ const topHundredClick = () => {
   .then(data => {
     setList(data.results)
     setCurrentGenre(null)
+    setSearch('')
     })
 }
 
@@ -55,6 +51,7 @@ const handleGenreClick = (genre) => {
     setList(data.results)
   })
   setCurrentGenre(genre.name)
+  setSearch('')
 }
 
 
@@ -75,7 +72,6 @@ const goToPrevPage = () => {
   setCurrentPage(prevPage)
 }
 
-
   return (
     <>
 <h1>{!currentGenre ? 'Top 100 Games' : `${currentGenre} Games`}</h1>
@@ -90,12 +86,8 @@ const goToPrevPage = () => {
     
 </div>
 
-
-
-
 <div className="game-body">
   
-
 <div className="genre-list">
 
 <h2>Genres</h2>
@@ -113,13 +105,9 @@ const goToPrevPage = () => {
 {list?.map((game, i) => {
 
   return <Card key={i} game={game}  />
-    
-   
 })}
 
 </div>
-
-
 </div>
 
 <div className="footer"><button className="btn"  onClick={goToPrevPage}>Back</button><button className="btn" onClick={goToNextPage}>Next</button></div>
