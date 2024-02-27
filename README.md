@@ -4,8 +4,8 @@ You can search for your favorite game or if you're looking for something new, yo
 
 You can select a game that will give you additional info, pictures, and a direct link to the games website.
 
-![Screenshot] (projectpic1.png)
+![Screenshot](projectpic1.png)
 
-![Screenshot] (projectpic2.png)
+![Screenshot](projectpic2.png)
 
-![Screenshot] (projectpic3.png)
+![Screenshot](projectpic3.png)
